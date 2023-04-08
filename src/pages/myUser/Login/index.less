@@ -1,0 +1,145 @@
+#bg {
+  position: absolute;
+  z-index: -1;
+  filter: blur(0);
+  animation: bgH-hover-back 1s forwards;
+  inset: 0;
+}
+
+.pg {
+  width: 500px;
+  margin: 0 75px;
+}
+
+.row-box {
+  width: 100%;
+  overflow: hidden;
+}
+
+.displayPlace {
+  display: flex;
+  flex-flow: row nowrap;
+  height: unset;
+  transition: all 0.4s ease;
+}
+
+.displayPlace div {
+  width: 350px;
+}
+
+#lb {
+  position: absolute;
+  width: 500px;
+  margin: auto;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s linear;
+  animation: lb-back 1s forwards;
+  inset: 0;
+}
+
+#lb p {
+  // margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 40px;
+  text-align: left;
+}
+
+#lb input {
+  width: 100%;
+  height: 40px;
+  margin-bottom: 10px;
+  font-size: large;
+  background-color: #fff0;
+  border: 0;
+  border-bottom: #232 1px solid;
+  outline: none;
+}
+
+#lb span {
+  display: block;
+  margin-bottom: 10px;
+  line-height: 30px;
+}
+
+.pg div > button {
+  display: inline-block;
+  width: 100px;
+  margin-right: 1px;
+  padding: 10px;
+  color: #fff;
+  background-color: #0067b8;
+  border: 0;
+  border-color: #0067b8;
+  cursor: pointer;
+}
+.pg div {
+  text-align: right;
+}
+.pg div > button:first-child {
+  margin-left: auto;
+}
+
+#lb button:hover {
+  background-color: #005da6;
+}
+
+#logo {
+  width: 200px;
+}
+
+#lb:hover {
+  animation: lb-to 1s forwards;
+}
+
+#lb:hover + #bg {
+  animation: bgH-hover-to 1s forwards;
+}
+
+@keyframes lb-to {
+  0% {
+    background-color: rgba(255, 255, 255, 0.7);
+    filter: brightness(1);
+    backdrop-filter: blur(12px);
+  }
+
+  100% {
+    background-color: rgba(255, 255, 255, 0.9);
+    filter: brightness(1.2);
+    backdrop-filter: blur(0);
+  }
+}
+
+@keyframes lb-back {
+  0% {
+    background-color: rgba(255, 255, 255, 0.9);
+    filter: brightness(1.2);
+    backdrop-filter: blur(1px);
+  }
+
+  100% {
+    background-color: rgba(255, 255, 255, 0.7);
+    filter: brightness(1);
+    backdrop-filter: blur(12px);
+  }
+}
+
+@keyframes bgH-hover-to {
+  0% {
+    filter: blur(0) contrast(100%) brightness(1);
+  }
+
+  100% {
+    filter: blur(12px) contrast(140%) brightness(1.4);
+  }
+}
+
+@keyframes bgH-hover-back {
+  0% {
+    filter: blur(12px) contrast(140%) brightness(1.4);
+  }
+
+  100% {
+    filter: blur(0) contrast(100%) brightness(1);
+  }
+}
