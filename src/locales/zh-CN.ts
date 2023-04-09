@@ -20,7 +20,9 @@ export default {
   'app.preview.down.block': '下载此页面到本地项目',
   'app.welcome.link.fetch-blocks': '获取全部区块',
   'app.welcome.link.block-list': '基于 block 开发，快速构建标准页面',
-
+  'app.github.repository':'Github 仓库',
+  'app.github.fornt':'前端项目',
+  'app.github.back':'后端项目',
   ...pages,
   ...globalHeader,
   ...menu,

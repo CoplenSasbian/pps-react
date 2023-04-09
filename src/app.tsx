@@ -1,19 +1,19 @@
 import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import type { MenuDataItem, Settings as LayoutSettings } from '@ant-design/pro-components';
-import { PageLoading, SettingDrawer } from '@ant-design/pro-components';
+import {  SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from 'umi';
 import { history } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/login/api';
 import { getModelList } from './services/model/http';
-import { base64Encode } from './services/utils';
+import { Skeleton } from 'antd';
 
 const loginPath = '/user/login';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 export const initialStateConfig = {
-  loading: <PageLoading />,
+  loading: <Skeleton />,
 };
 
 /**
