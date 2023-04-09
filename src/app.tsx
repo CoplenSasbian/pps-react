@@ -110,21 +110,6 @@ export const layout: RunTimeLayoutConfig = async ({ initialState, setInitialStat
       return (
         <>
           {children}
-        
-            <SettingDrawer
-
-              disableUrlParams
-              enableDarkTheme={true}
-              settings={initialState?.settings}
-              // eslint-disable-next-line @typescript-eslint/no-shadow
-              onSettingChange={(settings) => {
-                setInitialState((preInitialState) => ({
-                  ...preInitialState,
-                  settings,
-                }));
-              }}
-            />
-          
         </>
       );
     },
