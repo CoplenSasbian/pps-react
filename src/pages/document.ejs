@@ -22,10 +22,55 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
-    <title>Ant Design Pro</title>
+    <title>Futurvo</title>
     <link rel="icon" href="<%= context.config.publicPath +'favicon.ico'%>" type="image/x-icon" />
   </head>
   <body>
-      Loading
+    <div id="root">
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          background-color: #0f3057;
+          background-image: linear-gradient(135deg, #0072ff 10%, #00c6ff 100%);
+          font-family: Arial, sans-serif;
+          height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+        }
+        .loader {
+          border: 8px solid rgba(255, 255, 255, 0.2);
+          border-top: 8px solid #fff;
+          border-radius: 50%;
+          width: 50px;
+          height: 50px;
+          animation: spin 1s linear infinite;
+          margin-bottom: 20px;
+        }
+        h1 {
+          color: #fff;
+          font-size: 30px;
+          font-weight: 400;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          margin: 0;
+        }
+        p {
+          color: #fff;
+          font-size: 16px;
+          font-weight: 300;
+          margin: 0;
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      </style>
+      <div class="loader"></div>
+      <h1>Loading...</h1>
+      <p>Please wait while we load the content</p>
+    </div>
   </body>
 </html>

@@ -1,6 +1,6 @@
 import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
-import type { MenuDataItem, Settings as LayoutSettings } from '@ant-design/pro-components';
+import { MenuDataItem, Settings as LayoutSettings, PageLoading } from '@ant-design/pro-components';
 import {  SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from 'umi';
 import { history } from 'umi';
@@ -105,12 +105,14 @@ export const layout: RunTimeLayoutConfig = async ({ initialState, setInitialStat
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
     childrenRender: (children: any, props: { location: { pathname: string | string[] } }) => {
-      // if (initialState?.loading) return <PageLoading />;
+       if (initialState?.loading) return <PageLoading />;
+
       return (
         <>
           {children}
-          {!props.location?.pathname?.includes('/login') && (
+        
             <SettingDrawer
+
               disableUrlParams
               enableDarkTheme={true}
               settings={initialState?.settings}
@@ -122,7 +124,7 @@ export const layout: RunTimeLayoutConfig = async ({ initialState, setInitialStat
                 }));
               }}
             />
-          )}
+          
         </>
       );
     },
