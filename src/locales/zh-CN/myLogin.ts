@@ -13,6 +13,7 @@ export default {
   'pages.login.hasacc': '已经有账号？',
   'pages.login.refine': '完善信息',
   'pages.login.firstname': '姓',
+  'pages.login.lastname': '名',
   'pages.login.complete': '完成',
   'pages.login.pleaseenter': '请输入',
   'pages.login.passverify': '密码不能为空,并且长度应为8~16！',

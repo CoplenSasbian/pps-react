@@ -106,7 +106,6 @@ export const layout: RunTimeLayoutConfig = async ({ initialState, setInitialStat
     // 增加一个 loading 的状态
     childrenRender: (children: any, props: { location: { pathname: string | string[] } }) => {
        if (initialState?.loading) return <PageLoading />;
-
       return (
         <>
           {children}

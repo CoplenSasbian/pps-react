@@ -10,6 +10,7 @@ import mylogin from './zh-CN/myLogin';
 import showModel from './zh-CN/showModel';
 import showData from './zh-CN/showData';
 import Result from './zh-CN/result'
+import welcome from './zh-CN/welcome';
 export default {
   'page.title': '贫困指数预测',
   'navBar.lang': '语言',
@@ -35,4 +36,5 @@ export default {
   ...showModel,
   ...showData,
   ...Result,
+  ...welcome,
 };

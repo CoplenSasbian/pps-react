@@ -9,7 +9,8 @@ import settings from './en-US/settings';
 import mylogin from './en-US/myLogin';
 import showModel from './en-US/showModel';
 import showData from './en-US/showData';
-import Result from './en-US/result'
+import Result from './en-US/result';
+import welcome from './en-US/welcome';
 export default {
   'page.title': 'Poverty Index Prediction System',
   'navBar.lang': 'Languages',
@@ -23,6 +24,7 @@ export default {
   'app.github.repository':'Github repository',
   'app.github.fornt':'Front-end project',
   'app.github.back' :'Back-end project',
+  
   ...globalHeader,
   ...menu,
   ...settingDrawer,
@@ -35,4 +37,5 @@ export default {
   ...showModel,
   ...showData,
   ...Result,
+  ...welcome,
 };

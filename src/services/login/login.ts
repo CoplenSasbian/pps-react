@@ -24,3 +24,13 @@ export async function logout() {
     skipErrorHandler: true,
   });
 }
+
+
+export async function updateCurrent(user:API.CurrentUser) {
+  return request('/api/log/updatecurrent',{
+    method:'POST',
+    data:{
+      ...user
+    }
+  })
+}

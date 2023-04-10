@@ -95,7 +95,7 @@ const Result: React.FC<ResultShowProps> = (props) => {
       if(tableAction.current){
          tableAction.current.reload();
       }
-      },300)
+      },1000)
   }
 
   async function getData(params: any, sort: any, filter: any) {

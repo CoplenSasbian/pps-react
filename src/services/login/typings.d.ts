@@ -4,9 +4,13 @@
 declare namespace API {
   type CurrentUser = {
     username?: string;
+    firstname?: string;
+    lastname?: string;
+    lastname?: string;
     fullname?: string;
     email?: string;
-    last_login?: Date;
+    last_login?: number;
+    join_date?: number;
     is_superuser?: boolean;
   };
 
