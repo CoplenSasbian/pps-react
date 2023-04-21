@@ -7,6 +7,7 @@ import Avatar from './AvatarDropdown';
 import styles from './index.less';
 import { DefaultOptionType } from 'antd/lib/select';
 import { useIntl } from 'umi';
+import { base64Encode } from '@/services/utils';
 
 export type SiderTheme = 'light' | 'dark';
 
@@ -38,7 +39,7 @@ const GlobalHeaderRight: React.FC = () => {
         if(key?.startsWith('result-')){
           const it = {
             value:key,
-            label:<a onClick={()=>{history.push('/result/show/'+encodeURIComponent(key))}}>{intl.formatMessage({id:'menu.result'})}:{key.replace('result-','')}</a>
+            label:<a onClick={()=>{history.push('/result/show/'+base64Encode(key))}}>{intl.formatMessage({id:'menu.result'})}:{key.replace('result-','')}</a>
           } as DefaultOptionType;
           opt.push(it)
         }

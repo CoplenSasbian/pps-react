@@ -233,11 +233,8 @@ export default function Training() {
                 setCurrentFile(file.name);
                 setFileDesc(
                   intl.formatMessage({ id: 'addmodel.datatype' }) +
-                    file.type +
-                    '\n' +
-                    intl.formatMessage({ id: 'addmodel.size' }) +
-                    file.size +
-                    intl.formatMessage({ id: 'addmodel.byte' }),
+                  file.type +'\n' +intl.formatMessage({ id: 'addmodel.size' }) +
+                  file.size +intl.formatMessage({ id: 'addmodel.byte' }),
                 );
                 setupInfo();
                 resetWoeInfo();
@@ -450,7 +447,7 @@ export default function Training() {
     获取默认的Odds ，Odds 一般需要根据经验人为设定
   */
   function getOdds(){
-      wsCilne.current.getOdds().then((res:any)=>{
+      wsCilne.current.getOdds().then((res: any)=>{
           setModelPreset((per)=>{
               const nper = [...per];
               return nper.map((item)=>{

@@ -8,6 +8,7 @@ import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/login/api';
 import { getModelList } from './services/model/http';
 import { Skeleton } from 'antd';
+import { base64Encode } from './services/utils';
 
 const loginPath = '/user/login';
 
@@ -74,7 +75,7 @@ export const layout: RunTimeLayoutConfig = async ({ initialState, setInitialStat
             if (key && key.startsWith('result-')) {
               item.children?.push({
                 name: key.replace('result-', ''),
-                path: '/result/show/' + encodeURIComponent(key),
+                path: '/result/show/' + base64Encode( key),
                 locale: false,
               });
             }

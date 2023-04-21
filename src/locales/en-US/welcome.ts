@@ -7,4 +7,5 @@ export default{
     'welcome.save':'Save',
     'welcome.username':'Username',
     'welcome.function':'Function',
+    'weclome.lastlog':'Last login',
 }

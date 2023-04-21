@@ -24,6 +24,7 @@ import './index.less';
 import type { RcFile } from 'antd/lib/upload';
 import { ImportDataMapping } from '../ImportDataMapping';
 import { DatabaseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { base64Encode } from '@/services/utils';
 type ShowDataProc = {
   modelId: number;
 };
@@ -355,7 +356,7 @@ const ShowData: React.FC<ShowDataProc> = ({ modelId }) => {
       );
       setSelectOpen(false);
       refresh();
-      history.push("/result/show/"+encodeURIComponent(name))
+      history.push("/result/show/"+base64Encode(name))
     });
   }
   function addCurrentpage() {

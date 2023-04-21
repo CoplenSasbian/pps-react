@@ -1,9 +1,10 @@
 import { getCoefficient, getIntercept } from '@/services/data/http';
-import { o2num } from '@/services/utils';
-import { DeleteOutlined } from '@ant-design/icons';
+import { base64Decode, o2num } from '@/services/utils';
+import { Column } from '@ant-design/charts';
+import { BarChartOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, Tooltip } from 'antd';
+import { Button, Modal, Tooltip } from 'antd';
 
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useIntl, useParams } from 'umi';
@@ -22,16 +23,18 @@ const Result: React.FC<ResultShowProps> = (props) => {
   const tableAction = useRef<ActionType>();
   const [pageCount, setPageCount] = useState(0);
   const intl = useIntl();
-  const history = useHistory()
-  const modelId= useRef(0)
-  function getIntl(id: string){
-    return intl.formatMessage({id:id});
+  const history = useHistory();
+  const modelId = useRef(0);
+  const [showDescription,setShowDescription] = useState(false)
+  const [distributionData,setDistributionData]=useState(new Array<{type: string,score: number}>())
+  function getIntl(id: string) {
+    return intl.formatMessage({ id: id });
   }
   // const { model } = useModel('ModelData');
-  useEffect(loadData,[props.match.params.res])
+  useEffect(loadData, [props.match.params.res]);
 
-  function loadData () {
-    const name = decodeURIComponent(res);
+  function loadData() {
+    const name = base64Decode(res);
     const result = localStorage.getItem(name);
     if (result) {
       const resultObj = JSON.parse(result);
@@ -43,7 +46,7 @@ const Result: React.FC<ResultShowProps> = (props) => {
         const woeTable = resultObj.woeTable;
         const lableUse = JSON.parse(resultObj.useLable);
         const resultArr: number[] = resultObj.result ?? [];
-        const baseScore: number= resultObj.base_score;
+        const baseScore: number = resultObj.base_score;
         const pdoSocre: number = resultObj.pdo_score;
         const odds: number = resultObj.odds;
         let count = -1;
@@ -55,24 +58,22 @@ const Result: React.FC<ResultShowProps> = (props) => {
         });
 
         const arr = resultArr.map((probertly, index) => {
-          const obj = { } as any;//:Math.round(baseScore-pdoSocre*Math.log(score/(1-score)))
+          const obj = {} as any; //:Math.round(baseScore-pdoSocre*Math.log(score/(1-score)))
 
           let coeficientIndex = 0;
-          let y=intercept[0];
+          let y = intercept[0];
           Object.keys(woeTable).forEach((k) => {
-
             if (lableUse[k]) {
               obj[k] = woeTable[k]?.[index];
-              y+= woeTable[k]?.[index]*coefficient[coeficientIndex++]
-            }
-            else obj[k] = woeTable[k]?.[index];
+              y += woeTable[k]?.[index] * coefficient[coeficientIndex++];
+            } else obj[k] = woeTable[k]?.[index];
           });
 
-        const b = pdoSocre / Math.log(2);
-        const baseodds = odds;
-        const logOdds = Math.log(baseodds);
-        const a = baseScore + b * logOdds;
-        const score =  a - b * Math.log(probertly/(1-probertly));
+          const b = pdoSocre / Math.log(2);
+          const baseodds = odds;
+          const logOdds = Math.log(baseodds);
+          const a = baseScore + b * logOdds;
+          const score = a - b * Math.log(probertly / (1 - probertly));
           obj.score = Math.round(score);
           return obj;
         });
@@ -87,15 +88,14 @@ const Result: React.FC<ResultShowProps> = (props) => {
             } as ProColumns<any>;
           });
           cols.push({ title: 'Score', dataIndex: 'score', sorter: true, filters: true });
+          if (tableAction.current) {
+            tableAction.current.reload();
+          }
+
           return cols;
         });
       })();
     }
-    setTimeout(()=>{
-      if(tableAction.current){
-         tableAction.current.reload();
-      }
-      },1000)
   }
 
   async function getData(params: any, sort: any, filter: any) {
@@ -103,8 +103,6 @@ const Result: React.FC<ResultShowProps> = (props) => {
       const page = params.current;
       const pageSize = params.pageSize;
       const start = (page - 1) * pageSize;
-
-
       const records = object.filter((row: any) => {
         let flag = true;
         Object.keys(params)
@@ -141,13 +139,35 @@ const Result: React.FC<ResultShowProps> = (props) => {
       });
     });
   }
-  function deleteResult(){
-      if(confirm(getIntl('res.isdelete'))){
-        const name = decodeURIComponent(res);
-        localStorage.removeItem(name);
-        history.replace("/data/show/"+modelId.current)
-      }
+  function deleteResult() {
+    if (confirm(getIntl('res.isdelete'))) {
+      const name = base64Decode(res);
+      localStorage.removeItem(name);
+      history.replace('/data/show/' + modelId.current);
+    }
   }
+
+  function showDistribution() {
+    const minScore = Math.min(...object.map((o) => o.score));
+    const maxScore = Math.max(...object.map((o) => o.score));
+    const interval = (maxScore - minScore) / 12;
+    const result = new Array(12).fill(0);
+    for (let i = 0; i < object.length; i++) {
+      let index = Math.floor((object[i].score - minScore) / interval);
+      if (index === 12) index--;
+      result[index]++;
+    }
+    console.log(minScore,maxScore,interval,result);
+
+    setDistributionData(result.map((v,i)=>{
+      return {
+        type:Math.ceil(minScore+interval*i)+"-"+Math.ceil(minScore+interval*(i+1)),
+        score:v
+      }
+    }))
+    setShowDescription(true);
+  }
+
   return (
     <PageContainer>
       <ProTable<any>
@@ -157,14 +177,27 @@ const Result: React.FC<ResultShowProps> = (props) => {
         columns={tableCol}
         rowKey={(row) => JSON.stringify(row)}
         toolBarRender={() => [
-               <Tooltip title={getIntl('res.delete')}>
-                    <Button key="3" type='text' onClick={deleteResult} shape="circle">
-                      <DeleteOutlined color='red'/>
-                    </Button>
-                    </Tooltip>
-                  ]}
-
+          <Tooltip title={getIntl('res.delete')}>
+            <Button key="3" type="text" onClick={deleteResult} shape="circle">
+              <DeleteOutlined color="red" />
+            </Button>
+          </Tooltip>,
+          <Tooltip title={getIntl('res.distribution')}>
+            <Button key="3" type="text" onClick={showDistribution} shape="circle">
+            <BarChartOutlined />
+            </Button>
+          </Tooltip>,
+        ]}
       />
+
+
+    <Modal title={intl.formatMessage({id:'res.distribution.charm'})} open={showDescription} onCancel={()=>setShowDescription(false)}  footer={null}>
+        <Column 
+         data={distributionData}
+        xField='type'
+        yField='score'
+        />
+      </Modal>
     </PageContainer>
   );
 };

@@ -7,4 +7,5 @@ export default{
     'welcome.save':'保存',
     'welcome.username':'用户名',
     'welcome.function':'功能',
+    'welcome.lastlog':'最近一次登录'
 }
