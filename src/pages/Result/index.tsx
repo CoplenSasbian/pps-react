@@ -1,10 +1,12 @@
+import ModelData from '@/models/ModelData';
 import { getCoefficient, getIntercept } from '@/services/data/http';
+import { saveModelSocre } from '@/services/model/http';
 import { base64Decode, o2num } from '@/services/utils';
 import { Column } from '@ant-design/charts';
-import { BarChartOutlined, DeleteOutlined } from '@ant-design/icons';
+import { BarChartOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { Button, Modal, Tooltip } from 'antd';
+import { Button, Input, InputNumber, Modal, Slider, Tooltip, message } from 'antd';
 
 import { useEffect, useRef, useState } from 'react';
 import { useHistory, useIntl, useParams } from 'umi';
@@ -25,13 +27,17 @@ const Result: React.FC<ResultShowProps> = (props) => {
   const intl = useIntl();
   const history = useHistory();
   const modelId = useRef(0);
-  const [showDescription,setShowDescription] = useState(false)
-  const [distributionData,setDistributionData]=useState(new Array<{type: string,score: number}>())
+  const [showDescription, setShowDescription] = useState(false);
+  const [distributionData, setDistributionData] = useState(
+    new Array<{ type: string; score: number }>(),
+  );
+  const [baseScore, setBaseScore] = useState(0);
+  const [pdoSocre, setPdoScore] = useState(0);
   function getIntl(id: string) {
     return intl.formatMessage({ id: id });
   }
   // const { model } = useModel('ModelData');
-  useEffect(loadData, [props.match.params.res]);
+  useEffect(loadData, [props.match.params.res,baseScore,pdoSocre]);
 
   function loadData() {
     const name = base64Decode(res);
@@ -46,8 +52,10 @@ const Result: React.FC<ResultShowProps> = (props) => {
         const woeTable = resultObj.woeTable;
         const lableUse = JSON.parse(resultObj.useLable);
         const resultArr: number[] = resultObj.result ?? [];
-        const baseScore: number = resultObj.base_score;
-        const pdoSocre: number = resultObj.pdo_score;
+        if (baseScore === 0 || pdoSocre === 0) {
+          setBaseScore(resultObj.base_score);
+          setPdoScore(resultObj.pdo_score);
+        }
         const odds: number = resultObj.odds;
         let count = -1;
 
@@ -157,17 +165,25 @@ const Result: React.FC<ResultShowProps> = (props) => {
       if (index === 12) index--;
       result[index]++;
     }
-    console.log(minScore,maxScore,interval,result);
+    console.log(minScore, maxScore, interval, result);
 
-    setDistributionData(result.map((v,i)=>{
-      return {
-        type:Math.ceil(minScore+interval*i)+"-"+Math.ceil(minScore+interval*(i+1)),
-        score:v
-      }
-    }))
+    setDistributionData(
+      result.map((v, i) => {
+        return {
+          type: Math.ceil(minScore + interval * i) + '-' + Math.ceil(minScore + interval * (i + 1)),
+          score: v,
+        };
+      }),
+    );
     setShowDescription(true);
   }
-
+  function saveScore(){
+    saveModelSocre(modelId.current,baseScore,pdoSocre).then(_=>{
+      message.success('👌')
+    }).catch(err=>{
+      message.success(err)
+    })
+  }
   return (
     <PageContainer>
       <ProTable<any>
@@ -184,19 +200,46 @@ const Result: React.FC<ResultShowProps> = (props) => {
           </Tooltip>,
           <Tooltip title={getIntl('res.distribution')}>
             <Button key="3" type="text" onClick={showDistribution} shape="circle">
-            <BarChartOutlined />
+              <BarChartOutlined />
             </Button>
           </Tooltip>,
+          <>
+            {intl.formatMessage({ id: 'addmodel.generatermdoel.base' })}
+            <InputNumber
+              value={baseScore}
+              onChange={(env) => {
+                if (env) setBaseScore(env);
+              }}
+              placeholder={intl.formatMessage({ id: 'addmodel.generatermdoel.base' })}
+              style={{ width: '60px' }}
+            />
+          </>,
+          <>
+            {intl.formatMessage({ id: 'addmodel.generatermdoel.pdo' })}
+            <InputNumber
+              value={pdoSocre}
+              onChange={(env) => {
+                if (env) setPdoScore(env);
+              }}
+              placeholder={intl.formatMessage({ id: 'addmodel.generatermdoel.pdo' })}
+              style={{ width: '60px' }}
+            />
+          </>,
+           <Tooltip title={getIntl('res.savesocre')}>
+           <Button key="3" type="text" onClick={saveScore} shape="circle">
+           <SaveOutlined />
+           </Button>
+         </Tooltip>,
         ]}
       />
 
-
-    <Modal title={intl.formatMessage({id:'res.distribution.charm'})} open={showDescription} onCancel={()=>setShowDescription(false)}  footer={null}>
-        <Column 
-         data={distributionData}
-        xField='type'
-        yField='score'
-        />
+      <Modal
+        title={intl.formatMessage({ id: 'res.distribution.charm' })}
+        open={showDescription}
+        onCancel={() => setShowDescription(false)}
+        footer={null}
+      >
+        <Column data={distributionData} xField="type" yField="score" />
       </Modal>
     </PageContainer>
   );
