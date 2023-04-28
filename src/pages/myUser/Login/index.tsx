@@ -1,9 +1,17 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './index.less';
 import { currentUser, has, has_email, refine } from '@/services/login/api';
-import { login, registered } from '@/services/login/login';
-import { useHistory, useIntl, useLocation, useModel } from 'umi';
-function App() {
+import { bingImage, login, registered } from '@/services/login/login';
+import { Link, useHistory, useIntl, useLocation, useModel } from 'umi';
+interface LoginShowProps {
+  location: {
+    query: {
+      to: string
+    }
+  }
+}
+
+const App: React.FC<LoginShowProps>= (prop)=> {
   const intl = useIntl();
   const [stept, setStept] = useState(0);
   const [hasUser, setHasUser] = useState(true);
@@ -15,11 +23,14 @@ function App() {
   const [firstname, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [regMessage, setRegMessage] = useState('');
-  const eif = useRef<HTMLIFrameElement>(null);
   const { initialState, setInitialState } = useModel('@@initialState');
   const history = useHistory();
+  
   const heightList = [440, 440, 590, 460];
-
+  const [bingImageInfo, setBingImageInfo] = useState<{
+    images: [{ url: string; copyright: string; title: string; copyrightlink: string }];
+  }>();
+  const [copyrightShow, setCopyrightShow] = useState(false);
   async function log_acc() {
     if (username) {
       const res = await has(username);
@@ -33,12 +44,10 @@ function App() {
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
-    if (userInfo) {
-      await setInitialState((s: any) => ({
-        ...s,
-        currentUser: userInfo,
-      }));
-    }
+    await setInitialState({...initialState,currentUser:userInfo});
+    if(initialState&&userInfo)
+      initialState.currentUser = userInfo
+    console.log(initialState)
   };
   async function login_acc() {
     if (username && password) {
@@ -112,14 +121,23 @@ function App() {
 
   async function completLogin() {
     await fetchUserInfo();
-    const { query } = history.location;
-    const { redirect } = query as { redirect: string };
-    history.push(redirect || '/');
+    if( prop.location.query.to){
+      history.replace( prop.location.query.to);
+      return;
+    }
+    history.replace('/welcome')  ;
   }
 
   function getIntl(id: string) {
     return intl.formatMessage({ id: id });
   }
+
+  useEffect(() => {
+    bingImage().then((res) => {
+      setBingImageInfo(res);
+    });
+  }, []);
+
   return (
     <>
       <div id="lb" style={{ height: heightList[stept] + 'px', overflow: 'hidden', zIndex: 10001 }}>
@@ -323,11 +341,39 @@ function App() {
       <div
         id="bg"
         style={{
-          background: 'url(https://baotangguo.cn:8081/) no-repeat center center',
+          background: `url(https://www.bing.com${bingImageInfo?.images[0].url}) no-repeat center center`,
           backgroundSize: '100%',
           zIndex: '1000',
         }}
-      />
+      >
+        <div />
+      </div>
+      {copyrightShow && (
+        <div
+          className="cpyl"
+          onMouseEnter={(_) => setCopyrightShow(true)}
+          onMouseLeave={(_) => setCopyrightShow(false)}
+        >
+          <a
+            href={bingImageInfo?.images[0].copyrightlink}
+          >
+            {bingImageInfo?.images[0].copyright}
+          </a>
+        </div>
+      )}
+      <div
+        className="cpy"
+        onMouseEnter={(_) => setCopyrightShow(true)}
+        onMouseLeave={(_) => setCopyrightShow(false)}
+      >
+        <h2 className="cpyt">
+          <svg width={12} hanging={12} viewBox="0 0 12 12" aria-hidden="true" role="presentation">
+            <path d="M6.5 3a1.5 1.5 0 1 0 1.5 1.5 1.5 1.5 0 0 0-1.5-1.5zm0-3a4.5 4.5 0 0 0-4.5 4.5 5.607 5.607 0 0 0 .087.873c.453 2.892 2.951 5.579 3.706 6.334a1 1 0 0 0 1.414 0c.755-.755 3.253-3.442 3.706-6.334a5.549 5.549 0 0 0 .087-.873 4.5 4.5 0 0 0-4.5-4.5zm3.425 5.218c-.36 2.296-2.293 4.65-3.425 5.782-1.131-1.132-3.065-3.486-3.425-5.782a4.694 4.694 0 0 1-.075-.718 3.5 3.5 0 0 1 7 0 4.634 4.634 0 0 1-.075.718z"></path>
+          </svg>
+          {bingImageInfo?.images[0].title}
+        </h2>
+        <br />
+      </div>
     </>
   );
 }

@@ -94,9 +94,12 @@ export const layout: RunTimeLayoutConfig = async ({ initialState, setInitialStat
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
+      console.log(initialState?.currentUser,location.pathname)
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         // document.location.href = loginPath;
-        history.push(loginPath);
+        history.replace({pathname:loginPath,query:{
+          to:location.pathname
+        }});
         return;
       }
     },

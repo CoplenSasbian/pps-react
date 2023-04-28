@@ -34,3 +34,9 @@ export async function updateCurrent(user:API.CurrentUser) {
     }
   })
 }
+
+export async function bingImage() {
+  return request('/api/log/bingimage',{
+    method:'GET'
+  })
+}
