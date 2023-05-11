@@ -74,13 +74,15 @@ const ShowData: React.FC<ShowDataProc> = ({ modelId }) => {
       .catch(() => {
         history.replace('/404');
       });
-  }, [model]);
+  }, [model,modelId]);
 
   function setupInfo() {
     setupDataType();
     setupTableCol();
     setupNullable();
     setupMissing();
+    tableAction.current?.reset();
+    tableAction.current?.reload();
   }
   function setupMissing() {
     const describe = JSON.parse(modelInfo.current?.missing_info);

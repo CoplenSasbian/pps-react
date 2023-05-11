@@ -37,7 +37,7 @@ const Result: React.FC<ResultShowProps> = (props) => {
     return intl.formatMessage({ id: id });
   }
   // const { model } = useModel('ModelData');
-  useEffect(loadData, [props.match.params.res,baseScore,pdoSocre]);
+  useEffect(loadData, [props.match.params.res, baseScore, pdoSocre, res]);
 
   function loadData() {
     const name = base64Decode(res);
