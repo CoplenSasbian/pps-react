@@ -33,12 +33,15 @@ const Result: React.FC<ResultShowProps> = (props) => {
   );
   const [baseScore, setBaseScore] = useState(0);
   const [pdoSocre, setPdoScore] = useState(0);
+  const chagModel = useRef(false);
   function getIntl(id: string) {
     return intl.formatMessage({ id: id });
   }
   // const { model } = useModel('ModelData');
   useEffect(loadData, [props.match.params.res, baseScore, pdoSocre, res]);
-
+  useEffect(()=>{
+    chagModel.current = true;
+  },[res,props.match.params.res,]);
   function loadData() {
     const name = base64Decode(res);
     const result = localStorage.getItem(name);
@@ -55,6 +58,11 @@ const Result: React.FC<ResultShowProps> = (props) => {
         if (baseScore === 0 || pdoSocre === 0) {
           setBaseScore(resultObj.base_score);
           setPdoScore(resultObj.pdo_score);
+        }
+        if(chagModel.current){
+          setBaseScore(resultObj.base_score);
+          setPdoScore(resultObj.pdo_score);
+          chagModel.current =false;
         }
         const odds: number = resultObj.odds;
         let count = -1;
